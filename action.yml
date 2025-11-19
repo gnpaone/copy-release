@@ -7,8 +7,8 @@ inputs:
     required: true
     description: 'The source org/repo for the release. The release will be copied from this repository.'
   destination_repo:
-    required: true
-    description: 'The destination org/repo for the release. The release will be created or updated in this repository.'
+    required: false
+    description: 'The destination org/repo for the release. The release will be created or updated in this repository. Defaults to the current repository.'
   github_token:
     required: true
     default: ${{ github.token }}
