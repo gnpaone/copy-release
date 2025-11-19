@@ -1,0 +1,26 @@
+name: Build and Upload JAR on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    container:
+      image: sbtscala/scala-sbt:eclipse-temurin-24.0.1_9_1.11.7_3.7.4
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Build JAR using sbt assembly
+        run: sbt assembly
+
+      - name: Upload JAR to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: target/scala-*/app.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
