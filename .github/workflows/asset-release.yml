@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Build JAR using sbt assembly
+      - name: Build JAR
         run: sbt assembly
 
       - name: Upload JAR to release
