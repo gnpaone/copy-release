@@ -35,6 +35,7 @@ This GitHub Action is useful when you maintain multiple mirrors, split repos, or
 
 ## 🚀 Usage
 
+<!-- COPY_RELEASE_WORKFLOW_START -->
 ```yaml
 name: Copy Release
 
@@ -74,3 +75,4 @@ jobs:
     override_draft: "true"
     skip_assets: "true"
 ```
+<!-- COPY_RELEASE_WORKFLOW_END -->
