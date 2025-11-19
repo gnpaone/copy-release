@@ -10,7 +10,8 @@ inputs:
     required: true
     description: 'The destination org/repo for the release. The release will be created or updated in this repository.'
   github_token:
-    required: false
+    required: true
+    default: ${{ github.token }}
     description: 'A token that has access to both the source and destination repositories. If not provided, the action will fall back to the default GITHUB_TOKEN.'
   tag:
     required: false
