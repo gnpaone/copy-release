@@ -1,4 +1,4 @@
-name: "Copy Release"
+name: "Copy Repo Release"
 description: "Copy a release between repos"
 author: "gnpaone"
 
