@@ -1,4 +1,4 @@
-name := "copy-release"
+name := "copy-repo-release"
 version := "1.0.0"
 scalaVersion := "3.7.4"
 
