@@ -15,11 +15,15 @@ RELEASE_JSON=$(wget -qO- \
 JAR_URL=$(
   printf "%s\n" "$RELEASE_JSON" |
   awk '
-    /"url":/ {
-      match($0, /"url": *"([^"]+)"/, m)
-      if (m[1] != "") last_url = m[1]
+    index($0, "\"url\":") {
+      start = index($0, "\"url\":") + 6
+      first_q = index(substr($0, start), "\"")
+      second_q = index(substr($0, start + first_q), "\"")
+      url = substr($0, start + first_q, second_q - 1)
+      last_url = url
     }
-    /"name": "app.jar"/ {
+
+    index($0, "\"name\": \"app.jar\"") {
       print last_url
     }
   '
