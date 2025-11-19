@@ -38,7 +38,35 @@ jobs:
           CLEAN_TAG="${RAW_TAG#v}"      # remove leading v
           echo "clean_version=$CLEAN_TAG" >> $GITHUB_OUTPUT
 
+      - name: Bump version
+        id: bump
+        run: |
+          OLD="${{ steps.version.outputs.clean_version }}"
+          PART="${{ github.event.inputs.bump_type }}"
+
+          IFS='.' read -r MAJ MIN PATCH <<< "$OLD"
+
+          case "$PART" in
+            major)
+              MAJ=$((MAJ + 1))
+              MIN=0
+              PATCH=0
+              ;;
+            minor)
+              MIN=$((MIN + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW="$MAJ.$MIN.$PATCH"
+          echo "new_version=$NEW" >> $GITHUB_OUTPUT
+          echo "Bumped version: $OLD → $NEW"
+
       - name: Update version in README.md
+        id: updatever
         uses: gnpaone/dynamic-update-readme@v1.0.2
         with:
           readme_path: README.md
@@ -59,7 +87,7 @@ jobs:
                 runs-on: ubuntu-latest
                 steps:
                   - name: Copy GitHub Release
-                    uses: gnpaone/copy-repo-release@v${{ steps.version.outputs.clean_version }}
+                    uses: gnpaone/copy-repo-release@v${{ steps.bump.outputs.new_version }}
                     with:
                       source_repo: my-org/source-repo
                       tag: ${{ github.event.inputs.tag }}
@@ -71,7 +99,7 @@ jobs:
             
             ```yaml
             - name: Copy with Overrides
-              uses: gnpaone/copy-repo-release@v${{ steps.version.outputs.clean_version }}
+              uses: gnpaone/copy-repo-release@v${{ steps.bump.outputs.new_version }}
               with:
                 source_repo: user/project-A
                 destination_repo: user/project-B
@@ -83,12 +111,12 @@ jobs:
                 override_draft: "true"
                 skip_assets: "true"
             ```
-          commit_message: "Update workflows version to v${{ steps.version.outputs.clean_version }}"
+          commit_message: "Update version to v${{ steps.bump.outputs.new_version }}"
           confirm_and_push: false
 
       - name: Update version in build.sbt
         run: |
-          VERSION="${{ steps.version.outputs.clean_version }}"
+          VERSION="${{ steps.bump.outputs.new_version }}"
           echo "Updating build.sbt version → $VERSION"
 
           sed -i "s/^version := \".*\"/version := \"${VERSION}\"/" build.sbt
@@ -98,7 +126,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Bump version to v${{ steps.version.outputs.clean_version }}"
+          commit-message: "${{ steps.updatever.outputs.commit_message }}"
           committer: gnpaone <78990165+gnpaone@users.noreply.github.com>
           author: gnpaone <78990165+gnpaone@users.noreply.github.com>
           branch: bump-version
