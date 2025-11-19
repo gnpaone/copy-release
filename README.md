@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Copy GitHub Release
-        uses: gnpaone/copy-repo-release@v1.1.4
+        uses: gnpaone/copy-repo-release@v1.1.5
         with:
           source_repo: my-org/source-repo
           tag: 
@@ -63,7 +63,7 @@ jobs:
 
 ```yaml
 - name: Copy with Overrides
-  uses: gnpaone/copy-repo-release@v1.1.4
+  uses: gnpaone/copy-repo-release@v1.1.5
   with:
     source_repo: user/project-A
     destination_repo: user/project-B
